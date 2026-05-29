@@ -1,0 +1,7 @@
+name: web-camofox-extract
+version: 1.0.0
+description: "Camofox web extract — extract clean markdown from any URL via Camofox anti-detection browser. Requires CAMOFOX_URL pointing at your instance."
+author: WyattSanders
+kind: backend
+provides_web_providers:
+  - camofox

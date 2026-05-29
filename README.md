@@ -160,10 +160,33 @@ web:
 ```bash
 # ~/.hermes/.env
 CAMOFOX_URL=http://your-server:9377
-CAMOFOX_API_KEY=your-key
+CAMOFOX_API_KEY=your-key     # optional for localhost
 ```
 
-The plugin lives at `~/.hermes/hermes-agent/plugins/web/camofox/` and provides `supports_extract() -> True` with self-contained markdown conversion.
+### Install the Plugin
+
+```bash
+# Option 1: Direct copy (local machine)
+cp -r hermes-agent/plugins/web/camofox/ ~/.hermes/hermes-agent/plugins/web/camofox/
+
+# Option 2: From GitHub (any machine)
+# Clone this repo
+git clone https://github.com/WyattSanders/camofox-extract.git
+cp -r camofox-extract/hermes-agent/plugins/web/camofox/ ~/.hermes/hermes-agent/plugins/web/camofox/
+```
+
+Then restart Hermes — built-in web plugins are auto-discovered.
+
+### Verify
+
+```bash
+cd ~/.hermes/hermes-agent
+python3 -c "from plugins.web.camofox.provider import CamofoxWebExtractProvider; \
+p = CamofoxWebExtractProvider(); \
+print('Available:', p.is_available(), '| Extract:', p.supports_extract())"
+```
+
+Expected output: `Available: True | Extract: True`
 
 ## Requirements
 
