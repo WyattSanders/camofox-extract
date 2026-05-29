@@ -1,0 +1,110 @@
+Metadata-Version: 2.4
+Name: camofox-extract
+Version: 0.1.0
+Summary: Extract clean markdown from any URL using the Camofox anti-detection browser
+License-Expression: MIT
+Project-URL: Homepage, https://github.com/nousresearch/camofox-extract
+Project-URL: Repository, https://github.com/nousresearch/camofox-extract
+Keywords: camofox,web-scraping,anti-detection,extraction,markdown
+Classifier: Development Status :: 4 - Beta
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Topic :: Internet :: WWW/HTTP
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: requests>=2.28
+Requires-Dist: click>=8.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0; extra == "dev"
+Dynamic: license-file
+
+# camofox-extract
+
+Extract clean markdown from any URL using the Camofox anti-detection browser.
+
+## Why?
+
+Regular web scrapers get blocked by Cloudflare, bot detection, and paywalls.
+Camofox uses a stealth browser that mimics real user behavior, bypassing these
+defenses. This tool wraps the Camofox REST API to make extraction dead simple.
+
+## Install
+
+```bash
+pip install camofox-extract
+```
+
+## Quick Start
+
+```bash
+# Extract content from a URL
+camofox-extract https://example.com
+
+# Multiple URLs
+camofox-extract https://example.com https://other.com
+
+# JSON output
+camofox-extract --json https://example.com
+
+# Raw accessibility tree
+camofox-extract --raw https://example.com
+```
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `CAMOFOX_URL` | `http://localhost:9377` | Camofox API server URL |
+| `CAMOFOX_API_KEY` | (empty) | API key for authentication |
+
+## Python API
+
+```python
+from camofox_extract import extract_urls
+
+results = extract_urls(
+    ["https://example.com"],
+    camofox_url="http://localhost:9377",
+)
+
+for result in results:
+    print(f"Title: {result['title']}")
+    print(f"Content:\n{result['content']}")
+```
+
+Or use the client directly:
+
+```python
+from camofox_extract import CamofoxClient
+
+with CamofoxClient() as client:
+    tab_id = client.create_tab()
+    client.navigate(tab_id, "https://example.com")
+    client.wait_for_ready(tab_id)
+    snapshot = client.snapshot(tab_id)
+    print(snapshot)
+    client.close_tab(tab_id)
+```
+
+## How It Works
+
+1. Connects to a running Camofox browser instance via REST API
+2. Opens a browser tab and navigates to the target URL
+3. Waits for the page to fully load (network idle)
+4. Captures the accessibility tree (lightweight, no screenshot needed)
+5. Converts the accessibility tree to clean markdown
+6. Returns the extracted content
+
+The accessibility tree contains all visible text, links, headings, and images
+without the noise of HTML markup, JavaScript, or styling.
+
+## License
+
+MIT
