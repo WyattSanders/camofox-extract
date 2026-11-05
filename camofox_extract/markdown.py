@@ -33,15 +33,16 @@ def _parse_line(line: str) -> Optional[dict]:
 
     indent = len(stripped) - len(stripped.lstrip())
 
+    # - type: unquoted text (leaf paragraph/text with content).
+    # Checked first so text that itself ends in ":" ("- text: Note:") is kept.
+    m = re.match(r'^\s*-\s+(\w+):\s*(.+?)\s*$', stripped)
+    if m:
+        return {"indent": indent, "type": m.group(1), "text": m.group(2).strip(), "attrs": {}}
+
     # - type "text" [attrs]:  (colon = has children)
     m = re.match(r'^\s*-\s+(\w+)(?:\s+"([^"]*)")?\s*(.*?)\s*:\s*$', stripped)
     if m:
         return {"indent": indent, "type": m.group(1), "text": m.group(2) or "", "attrs": _attrs(m.group(3))}
-
-    # - type: unquoted text (leaf paragraph/text with content)
-    m = re.match(r'^\s*-\s+(\w+):\s*(.+?)\s*$', stripped)
-    if m:
-        return {"indent": indent, "type": m.group(1), "text": m.group(2).strip(), "attrs": {}}
 
     # - type "text" [attrs] (no colon, leaf)
     m = re.match(r'^\s*-\s+(\w+)(?:\s+"([^"]*)")?\s*(.*?)\s*$', stripped)
@@ -93,14 +94,16 @@ def accessibility_tree_to_markdown(snapshot_text: str) -> str:
 
     i = 0
     while i < len(lines):
-        stripped = lines[i].strip()
+        line = lines[i]
         i += 1
 
-        if not stripped:
+        if not line.strip():
             flush()
             continue
 
-        node = _parse_line(stripped)
+        # Parse the unstripped line so node["indent"] is the real nesting
+        # depth; the link/img look-ahead relies on it to stop at siblings.
+        node = _parse_line(line)
         if node is None:
             flush()
             continue

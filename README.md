@@ -20,8 +20,12 @@ Camofox patches Firefox at the C++ level (WebDriver API, canvas fingerprint, aud
 
 ## Install
 
+Not published on PyPI yet. Install from GitHub:
+
 ```bash
-pip install camofox-extract
+pip install git+https://github.com/WyattSanders/camofox-extract.git
+# or, from a clone (with test deps):
+pip install -e ".[dev]" && pytest
 ```
 
 You also need a running [Camofox server](https://github.com/jo-inc/camofox-browser):
@@ -174,6 +178,11 @@ cp -r hermes-agent/plugins/web/camofox/ ~/.hermes/hermes-agent/plugins/web/camof
 git clone https://github.com/WyattSanders/camofox-extract.git
 cp -r camofox-extract/hermes-agent/plugins/web/camofox/ ~/.hermes/hermes-agent/plugins/web/camofox/
 ```
+
+The plugin imports `camofox_extract`, so also install this package into the
+Python environment Hermes runs in (e.g. `~/.hermes/hermes-agent/venv/bin/pip install
+git+https://github.com/WyattSanders/camofox-extract.git`). Otherwise
+`is_available()` returns False.
 
 Then restart Hermes — built-in web plugins are auto-discovered.
 

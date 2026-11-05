@@ -36,8 +36,8 @@ dev = [
 camofox-extract = "camofox_extract.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/nousresearch/camofox-extract"
-Repository = "https://github.com/nousresearch/camofox-extract"
+Homepage = "https://github.com/WyattSanders/camofox-extract"
+Repository = "https://github.com/WyattSanders/camofox-extract"
 
 [tool.setuptools.packages.find]
 include = ["camofox_extract*"]
